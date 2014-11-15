@@ -1,0 +1,17 @@
+[IRCmasher v0.21]
+
+- added some commands/actions:
+    see http://ircmasher.latainski.de/docs/commands.htm for more
+- modules/
+    new modules: peak.php
+    obsolet modules: linux.php(joined basic.php)
+- some little changes on the core.
+
+
+[IRCmasher v0.20]
+- Some bug fixes: Joining a channel should work now everytime, hello message too.
+- [MODULE] admin.php: module for some administrative stuff.
+- channel rejoin.
+- added ACTIONS to a.php: the bot can do the '/me barfs on the floor' command ;D
+- cleand up the code a bit.
+- the rest I don't know anymore.
