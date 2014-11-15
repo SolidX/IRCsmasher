@@ -11,21 +11,21 @@
 global $server, $port, $pass, $nick, $real_name, $channel, $botpw;
 
 // Global configuration
-$server = "irc.euirc.net";       // the ircserver 
-$port = "6667";                  // port of the irc server
-$pass = "";                      // leave empty if server doesn't require a pw
-$nick = "ircsmasher";             // the nickname of the bot
-$nick_alternate = "weiberheld";  // nick if first is in use
-$real_name = "ircsmasher";       // his real name
-$channel = "#ircsmasher";         // seperate multiple channels with ';'
-$botpw = "12345";           // password for the bot
-$rejoin = "1";                     // activate rejoin? 1 = yes; 0 = no;
-$strokes = "300";                  // strokes a minute, speed of the bot
-$nickserv = "NickServ";           // NickServ 
-$ident = "";                // ident password if you don't need leave empty
+$server = "irc.example.com";    // IRC server
+$port = "6667";                 // IRC server port
+$pass = "";                     // IRC server password (leave blank if not required)
+$nick = "ircsmasher";           // The bot's nickname
+$nick_alternate = "ircmasher";  // Alternate nick in case $nick is in use
+$real_name = "IRCsmasher";      // Bot's "real" name
+$channel = "#ircsmasher";       // Channels to join (seperate multiple channels with ';')
+$botpw = "badpassword";         // Bot password
+$rejoin = "1";                  // Enable auto rejoin? 1 = yes; 0 = no;
+$strokes = "300";               // Bot's "typing speed" in strokes per minute
+$nickserv = "NickServ";         // NickServ
+$ident = "";                    // ident password (leave blank if not needed)
 
 // personal configuration
-$hello = "Hello @ All";          // channel join message
-$quit_message = "cu @all";       // message when bot shuts down
-$log_uptime = "on";              // log mashers uptime - on/off
+$hello = "Hello @ All";         // channel join message
+$quit_message = "cu @all";      // message when bot shuts down
+$log_uptime = "on";             // Enable logging of bot's uptime (on/off)
 ?>
