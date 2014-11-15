@@ -27,7 +27,7 @@ Edit the file (./inc/config.php). Should be self explanatory.
 Modules
 -------
 
-Put the modules you want to have started with ircmasher in the 'modules' directory.
+Put the modules you want to have started with IRCsmasher in the 'modules' directory.
 
 Commands
 --------
@@ -45,7 +45,7 @@ takeop $botpw $channel $nick           (take chan-op status)
 give voice                             (voice a user)
 dvoice $botpw $channel $nick           (de-voice a user)
 kick $botpw $channel $nick             (kick a user from channel)
-say $botpw $your_message_txt           (let the IRCmasher talk :P)
+say $botpw $your_message_txt           (let the bot talk)
 go to bed $nick $botpw                 (disconnect)
 
 // the user commands...

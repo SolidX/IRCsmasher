@@ -1,16 +1,10 @@
 <?php
 /**************************************************
  *
- * IRCmasher
- * [http://sourceforge.net/projects/ircmasher/]
+ * IRCsmasher - based on IRCmasher by Ralf Oechsner and Volker Latainski
  *
- * @Project: IRCmasher
- * @Authors: Ralf Oechsner, Volker Latainski
- * @License: GNU General Public License
- *
- **************************************************
- *
- * $id$
+ * @Project: IRCsmasher
+ * @License: GNU General Public License v2
  *
  **************************************************/
 // make variables global
@@ -20,10 +14,10 @@ global $server, $port, $pass, $nick, $real_name, $channel, $botpw;
 $server = "irc.euirc.net";       // the ircserver 
 $port = "6667";                  // port of the irc server
 $pass = "";                      // leave empty if server doesn't require a pw
-$nick = "ircmasher";             // the nickname of the bot
+$nick = "ircsmasher";             // the nickname of the bot
 $nick_alternate = "weiberheld";  // nick if first is in use
-$real_name = "ircmasher";       // his real name
-$channel = "#ircmasher";         // seperate multiple channels with ';'
+$real_name = "ircsmasher";       // his real name
+$channel = "#ircsmasher";         // seperate multiple channels with ';'
 $botpw = "12345";           // password for the bot
 $rejoin = "1";                     // activate rejoin? 1 = yes; 0 = no;
 $strokes = "300";                  // strokes a minute, speed of the bot

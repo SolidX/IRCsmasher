@@ -1,16 +1,10 @@
 <?php
 /**************************************************
  *
- * IRCmasher
- * [http://sourceforge.net/projects/ircmasher/]
+ * IRCsmasher - based on IRCmasher by Ralf Oechsner and Volker Latainski
  *
- * @Project: IRCmasher
- * @Authors: Ralf Oechsner, Volker Latainski
- * @License: GNU General Public License
- *
- **************************************************
- *
- * $id$
+ * @Project: IRCsmasher
+ * @License: GNU General Public License v2
  *
  **************************************************/
 
@@ -50,7 +44,7 @@ function basic ($output, $com1, $com2, $com3, $com4, $name, $begin, $chan, $comm
     priv_msg($channel, "GNU is a recursive acronym for \"GNU's Not Unix\"; it is pronounced \"guh-noo\".");
   } 
   if (eregi("paragraph", $message)) {
-    priv_msg($chan, "§1. Ich habe immer Recht! §2. Sollte ich einmal nicht Recht haben so tritt automatisch §1 in Kraft...");
+    priv_msg($chan, "ï¿½1. Ich habe immer Recht! ï¿½2. Sollte ich einmal nicht Recht haben so tritt automatisch ï¿½1 in Kraft...");
   }
 
   //time/date actions

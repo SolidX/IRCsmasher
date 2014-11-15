@@ -1,16 +1,10 @@
 <?php
 /**************************************************
  *
- * IRCmasher
- * [http://sourceforge.net/projects/ircmasher/]
+ * IRCsmasher - based on IRCmasher by Ralf Oechsner and Volker Latainski
  *
- * @Project: IRCmasher
- * @Authors: Ralf Oechsner, Volker Latainski
- * @License: GNU General Public License
- *
- **************************************************
- *
- * $id$
+ * @Project: IRCsmasher
+ * @License: GNU General Public License v2
  *
  **************************************************/
 
