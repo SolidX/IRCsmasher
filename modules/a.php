@@ -20,7 +20,7 @@ function iq_function ($name, $begin, $chan, $command, $message) {
 
   for($x=0;$x<count($db);$x++) {
     list ($a, $b) = split('[|]',$db[$x]);
-    if (eregi("$a", $message) && $command == "PRIVMSG") {
+    if (preg_match("/" . preg_quote($a) . "/i", $message) && $command == "PRIVMSG") {
       if (substr($b,0,7) == "/ACTION") {
 	$action = str_replace("/ACTION ","",$b); //don't put '/ACTION' out                                             
 	$action = rtrim($action);  //delete useless signs on the right                                                 
