@@ -48,6 +48,15 @@
                 write_socket("PRIVMSG $nickserv IDENTIFY $ident");
             }
             
+            if ($arguments[0] == "join" && $arguments[1] == $this->botpw && $command == "PRIVMSG") {
+                write_socket("JOIN ".$arguments[2]);
+                echo "JOINing ".$arguments[2]."\n";
+            }
+            
+            if ($arguments[0] == "nick" && $arguments[1] == $this->botpw && $command == "PRIVMSG") {
+                write_socket("NICK ".$arguments[2]);
+            }
+
             //let the bot talk for you :-)
             if (preg_match("/say [A-Za-z0-9_\-#]+ ".$this->botpw."/i", $output))
             {
