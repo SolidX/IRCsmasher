@@ -8,7 +8,7 @@
      *
      **************************************************/
 
-    require_once("./BaseBotModule.php");
+    require_once("BaseBotModule.php");
 
     class Peak extends BaseBotModule
     {

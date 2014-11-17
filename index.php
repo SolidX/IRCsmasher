@@ -21,15 +21,22 @@ if ($html == "1") {
     echo "IRCmasher started. Have a lot of fun ... \n";
 }
 // include all modules
-$modules = array("");
+$modules = array();
 $moddir = opendir("modules/");
 echo "Modules loaded: \n";
 while ($file = readdir($moddir)) {
-    if (preg_match("/\.php/i", $file)) {
+    $file_info = pathinfo($file);
+    if ($file_info['extension'] == "php" && $file_info['filename'] != "BaseBotModule") {
         echo $file . "\n";
-        include("modules/" . $file);
+        include_once("modules/" . $file);
         $file = str_replace(".php", "", $file);
-        array_push($modules, $file);
+        
+        //Pseudo-module-factory
+        if (class_exists($file)) {
+            //Module must have the same filename and class name for this to work
+            $module = new $file($socket, $server, $port, preg_quote($nick), $channel, $real_name, $botpw); 
+            array_push($modules, $module);
+        }
     }
 }
 echo "\n";
@@ -122,11 +129,13 @@ while (!feof($ircsocket)) {
     #  }
     #  $i++;
     #}
-    // now insert the modules
-    foreach ($modules as $exec_func) {
-        if (function_exists($exec_func)) {
-            call_user_func($exec_func, $incoming, $com1, $com2, $com3, $com4, $name, $begin, $chan, $command, $message);
-        }
+
+    // now execute the modules
+    foreach ($modules as $exec_module) {
+        if (preg_match("/!triggers/i", $message))
+            $exec_module->getTriggers($name);
+        else
+            $exec_module->runModule($incoming, $com1, $com2, $com3, $com4, $name, $begin, $chan, $command, $message);
     }
 
     // rejoin
