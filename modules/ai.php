@@ -30,7 +30,7 @@
             $this->module_name = "ai";
             $this->datapath = "modules/data/";
             $this->module_src = $this->datapath . $$this->module_name . ".data";
-            $this->db = file($$this->module_src);
+            $this->db = file($this->module_src);
         }
 
         private function iq_function($name, $begin, $chan, $command, $message) {
