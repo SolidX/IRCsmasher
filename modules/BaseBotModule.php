@@ -47,6 +47,7 @@
         }
         
         /**
+         * Cleans up a provided message's sender's nick.
          * 
          * @param string $name
          * @return string
