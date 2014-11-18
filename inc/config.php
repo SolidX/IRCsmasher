@@ -23,9 +23,10 @@ $rejoin = "1";                  // Enable auto rejoin? 1 = yes; 0 = no;
 $strokes = "300";               // Bot's "typing speed" in strokes per minute
 $nickserv = "NickServ";         // NickServ
 $ident = "";                    // ident password (leave blank if not needed)
+$debug_html = "1";              // debug mode - set to 0 for if running from cli, 1 if you want html output
 
 // personal configuration
 $hello = "Hello @ All";         // channel join message
-$quit_message = "cu @all";      // message when bot shuts down
+$quit_message = "cu @ all";      // message when bot shuts down
 $log_uptime = "on";             // Enable logging of bot's uptime (on/off)
 ?>

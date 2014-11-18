@@ -14,9 +14,8 @@ require_once('inc/functions.php');
 
 // not every server setting allows this!!
 set_time_limit(0);     // set maximum execution time to 0 (endless)
-// debug mode; set $html to 0 if you start the masher from command-line(php-cli)
-$html = "1";
-if ($html == "1") {
+
+if ($debug_html == "1") {
     echo "<html><head><title>Debug Mode</title></head><body bgcolor=\"\#000000\" text=\"\#ffffff\"><pre>";
     echo "IRCmasher started. Have a lot of fun ... \n";
 }
@@ -159,7 +158,7 @@ while (!feof($ircsocket)) {
     echo $incoming;  // debuging information 
 }
 
-if ($html == "1") {
+if ($debug_html == "1") {
     echo "</pre><body></html>";
 }
 ?>
