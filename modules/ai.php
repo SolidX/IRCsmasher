@@ -29,8 +29,8 @@
             $this->iq_status = true;        
             $this->module_name = "ai";
             $this->datapath = "modules/data/";
-            $this->module_src = $datapath . $module_name . ".data";
-            $this->db = file($module_src);
+            $this->module_src = $this->datapath . $$this->module_name . ".data";
+            $this->db = file($$this->module_src);
         }
 
         private function iq_function($name, $begin, $chan, $command, $message) {
@@ -50,6 +50,8 @@
 
         public function runModule($output, $com1, $com2, $com3, $com4, $name, $begin, $chan, $command, $message)
         {
+            $arguments = explode(" ",$message);  //split message into words
+            
             /*if ($arguments[0] == "refresh_db" && $arguments[1] == $this->botpw && $command == "PRIVMSG")
             {
                 fclose($db);  //close db
@@ -72,7 +74,9 @@
 
         public function getTriggers($user)
         {
-            //TODO: Implement getTriggers
+            notice_msg(parent::parseName($user), "Silence bot AI: !mute");
+            notice_msg(parent::parseName($user), "Un-mute bot AI: !unmute");
+            //TODO: Add messages for remaining Triggers
             return;
         }
     }
