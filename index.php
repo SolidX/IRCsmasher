@@ -15,18 +15,27 @@ require_once('inc/functions.php');
 // not every server setting allows this!!
 set_time_limit(0);     // set maximum execution time to 0 (endless)
 
-if ($debug_html == "1") {
-    echo "<html><head><title>Debug Mode</title></head><body bgcolor=\"\#000000\" text=\"\#ffffff\"><pre>";
+$enable_debugging = ($debug_mode == "on");
+
+if ($enable_debugging) {
+    if ($debug_html == "1")
+        echo "<html><head><title>IRCsmasher Debug Mode</title></head><body bgcolor=\"\#000000\" text=\"\#ffffff\"><pre>";
     echo "IRCmasher started. Have a lot of fun ... \n";
 }
+
 // include all modules
 $modules = array();
 $moddir = opendir("modules/");
-echo "Modules loaded: \n";
+
+if ($enable_debugging)
+    echo "Modules loaded: \n";
+
 while ($file = readdir($moddir)) {
     $file_info = pathinfo($file);
     if ($file_info['extension'] == "php" && $file_info['filename'] != "BaseBotModule") {
-        echo $file . "\n";
+        if ($enable_debugging)
+            echo $file . "\n";
+        
         include_once("modules/" . $file);
         $file = str_replace(".php", "", $file);
         
@@ -38,8 +47,10 @@ while ($file = readdir($moddir)) {
         }
     }
 }
-echo "\n";
 closedir($moddir);
+if ($enable_debugging)
+    echo "\n";
+
 
 // logging data
 #if($logdata == "1") {
@@ -155,10 +166,11 @@ while (!feof($ircsocket)) {
         die('Bot down.</pre>');
     }
 
-    echo $incoming;  // debuging information 
+    if ($enable_debugging)
+        echo $incoming;  // echos raw input from server
 }
 
-if ($debug_html == "1") {
+if ($enable_debugging && $debug_html == "1") {
     echo "</pre><body></html>";
 }
 ?>
