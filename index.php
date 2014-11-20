@@ -25,15 +25,18 @@ $moddir = opendir("modules/");
 echo "Modules loaded: \n";
 while ($file = readdir($moddir)) {
     $file_info = pathinfo($file);
-    if ($file_info['extension'] == "php" && $file_info['filename'] != "BaseBotModule") {
+    if (isset($file_info['extension']) && $file_info['extension'] == "php" && $file_info['filename'] != "BaseBotModule") {
         echo $file . "\n";
         include_once("modules/" . $file);
         $file = str_replace(".php", "", $file);
         
+        global $ircsocket;
+        $ircsocket = null; //Socket placeholder
+
         //Pseudo-module-factory
         if (class_exists($file)) {
             //Module must have the same filename and class name for this to work
-            $module = new $file($socket, $server, $port, preg_quote($nick), $channel, $real_name, $botpw); 
+            $module = new $file($ircsocket, $server, $port, preg_quote($nick), $channel, $real_name, $botpw); 
             array_push($modules, $module);
         }
     }

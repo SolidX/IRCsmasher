@@ -60,7 +60,7 @@
 
             //on join => check for users
             $join_signs = explode(" ", $com2);
-            if($join_signs[1] == "JOIN" && $name != $real_name)
+            if($join_signs[1] == "JOIN" && $name != $this->realName)
             {
                 write_socket("NAMES $com3");
                 $peak_datafile = "peak_" . rtrim($com3) . ".data";
@@ -70,7 +70,7 @@
                 {
                     $new_peak_data_split = $this->peak_read($peak_datapath);
 
-                    if($peak_data_split[0] < $count)
+                    if($new_peak_data_split[0] < $count)
                     {
                         $this->peak_write($count, $timestamp, $peak_datapath);
                     }

@@ -29,7 +29,7 @@
             $this->iq_status = true;        
             $this->module_name = "ai";
             $this->datapath = "modules/data/";
-            $this->module_src = $this->datapath . $$this->module_name . ".data";
+            $this->module_src = $this->datapath . $this->module_name . ".data";
             $this->db = file($this->module_src);
         }
 

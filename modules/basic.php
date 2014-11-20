@@ -52,7 +52,7 @@
                 priv_msg($chan, "Linux is a free Unix-type operating system originally created by Linus Torvalds with the assistance of developers around the world... and it's the best operating systems in the world :-)");
             }
             if (preg_match("/whatis\s[Gg][Nn][Uu]/", $message)) {
-                priv_msg($channel, "GNU is a recursive acronym for \"GNU's Not Unix\"; it is pronounced \"guh-noo\".");
+                priv_msg($chan, "GNU is a recursive acronym for \"GNU's Not Unix\"; it is pronounced \"guh-noo\".");
             }
             if (preg_match("/paragraph/", $message)) {
                 priv_msg($chan, "§1. Ich habe immer Recht! §2. Sollte ich einmal nicht Recht haben so tritt automatisch §1 in Kraft...");
