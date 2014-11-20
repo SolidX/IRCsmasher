@@ -44,17 +44,17 @@
             }
 
             if ($arguments[0] == "identify" && $arguments[1] == $this->botpw && $command == "PRIVMSG") {
-                write_socket("NICK $nick");
-                write_socket("PRIVMSG $nickserv IDENTIFY $ident");
+                change_nick($nick);
+                identify($nickserv, $ident);
             }
             
             if ($arguments[0] == "join" && $arguments[1] == $this->botpw && $command == "PRIVMSG") {
-                write_socket("JOIN ".$arguments[2]);
+                join_channel($arguments[2]); //TODO: Take password protected channels in to account.
                 echo "JOINing ".$arguments[2]."\n";
             }
             
             if ($arguments[0] == "nick" && $arguments[1] == $this->botpw && $command == "PRIVMSG") {
-                write_socket("NICK ".$arguments[2]);
+                change_nick($arguments[2]);
             }
 
             //let the bot talk for you :-)

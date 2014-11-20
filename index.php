@@ -12,9 +12,7 @@
 require_once('inc/config.php');
 require_once('inc/functions.php');
 
-// not every server setting allows this!!
-set_time_limit(0);     // set maximum execution time to 0 (endless)
-
+set_time_limit(0); //set unlimited maximum execution time
 $enable_debugging = ($debug_mode == "on");
 
 if ($enable_debugging) {
@@ -54,11 +52,6 @@ closedir($moddir);
 if ($enable_debugging)
     echo "\n";
 
-
-// logging data
-#if($logdata == "1") {
-#  $logh = fopen("ircsmasher.log","a");
-#}
 // uptime data
 $uptime_data = "modules/data/uptime.data";
 $timestamp = time();
@@ -73,15 +66,11 @@ if (!$ircsocket) {
 }
 
 // login
-if ($pass != "") {
-    write_socket("PASS " . $pass);
-}
-write_socket("NICK " . $nick);
-write_socket("USER " . $nick . " 0 0 :" . $real_name);
-sleep(1);
+if ($pass != "")
+    authenticate("PASS " . $pass);
+register_connection($nick, $real_name);
 
 // main function
-
 while (!feof($ircsocket)) {
 
     $incoming = fgets($ircsocket, 1024);
@@ -99,23 +88,19 @@ while (!feof($ircsocket)) {
     }
 
     // if username is in use
-    if (preg_match("/Nickname is already in use\./i", $com3)) {
-        write_socket("NICK " . $nick_alternate);
-        write_socket("USER " . $nick_alternate . " 0 0 :" . $real_name);
-        sleep(1);
-    }
+    if (preg_match("/Nickname is already in use\./i", $com3))
+        register_connection($nick_alternate, $real_name);
 
     // identify
     if ($ident != "" && preg_match("/End of \/MOTD command\./i", $com3)) {
-        priv_msg($nickserv, "IDENTIFY $ident");
+        identify($nickserv, $ident);
     }
 
     // join channels
     if (preg_match("/End of \/MOTD command\./i", $output[2]) || preg_match("/End of MOTD command\./i", $output[2])) {
         $channels = explode(";", $channel);
-        foreach ($channels as $channels) {
-            write_socket("JOIN $channels");
-            sleep(1);
+        foreach ($channels as $room) {
+            join_channel($room);
         }
     }
 
@@ -135,13 +120,6 @@ while (!feof($ircsocket)) {
 
     // create $message
     $message = $output[2];
-    #$i = 0;
-    #foreach($output as $var) {
-    #  if ($i > 2) {
-    #    $message = $message . $var;
-    #  }
-    #  $i++;
-    #}
 
     // now execute the modules
     foreach ($modules as $exec_module) {
@@ -155,7 +133,7 @@ while (!feof($ircsocket)) {
     if ($rejoin == "1") {
         if (preg_match("/KICK/", $output[1])) {
             $kicked_channel = explode(" ", $output[1]);
-            write_socket("JOIN " . $kicked_channel[2]);
+            join_channel($kicked_channel[2]);
         }
     }
 
