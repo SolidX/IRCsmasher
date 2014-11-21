@@ -67,7 +67,7 @@ if (!$ircsocket) {
 
 // login
 if ($pass != "")
-    authenticate("PASS " . $pass);
+    authenticate($pass);
 register_connection($nick, $real_name);
 
 // main function
