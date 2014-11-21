@@ -116,5 +116,14 @@
         else
             write_socket("JOIN $channel $key");
         sleep(1);
-    }    
+    }
+    
+    /**
+     * Terminates a client session.
+     * 
+     * @param string $quit_message (Optional) Message to display on quitting.
+     */
+    function quit($quit_message = "") {
+        write_socket("QUIT : {$quit_message}");
+    }
 ?>

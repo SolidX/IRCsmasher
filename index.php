@@ -139,8 +139,7 @@ while (!feof($ircsocket)) {
 
     // quit the bot
     if (preg_match("/go to bed ".preg_quote($nick." ".$botpw)."/i", $message)) {
-        priv_msg($chan, $quit_message);
-        fputs($ircsocket, "QUIT : Life is too short\n\r");
+        quit($quit_message);
         fclose($ircsocket);
         $timestamp = "";
         uptime($timestamp, $uptime_data);
