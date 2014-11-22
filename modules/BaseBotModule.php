@@ -33,6 +33,17 @@
         /** @var string */
         protected $module_version;
 
+        /**
+         * Creates a new instance of this module.
+         * 
+         * @param resource $socket The resource representing an open connection to an IRC server.
+         * @param string $ircserver IRC server host name
+         * @param string $portNumber IRC server port number
+         * @param string $myNick Bot's current nick
+         * @param string $channels Semicolon separated list of channels the bot joins on start up.
+         * @param string $realName Bot's "real" name
+         * @param string $botPword Bot password
+         */
         public function __construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword)
         {
             $this->module_version = "0.1";
@@ -68,15 +79,15 @@
         /**
          * Takes a message, parses it to see if it's activated this module's functionality and then executes the necessary functionality.
          * 
-         * @param string $output
-         * @param string $com1
-         * @param string $com2
-         * @param string $com3
-         * @param string $name
-         * @param string $begin
-         * @param string $chan
-         * @param string $command
-         * @param string $message
+         * @param string $output Raw incoming message from the IRC server
+         * @param string $com1 Prefix component of the raw message (usually empty)
+         * @param string $com2 Command component of the raw message (typically contains sender, status code / command & message target info)
+         * @param string $com3 Params component of the raw message (typically contains a user's message)
+         * @param string $name Name of the message sender (if available)
+         * @param string[] $begin An array of the components constituting $com2
+         * @param string $chan The target the message was sent to (either a channel or the bot's user name
+         * @param string $command The command used to send the message (ex. PRIVMSG, NOTICE, ect.)
+         * @param string $message The body of a user's message
          */
         abstract public function runModule($output, $com1, $com2, $com3, $name, $begin, $chan, $command, $message);
         
