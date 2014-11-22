@@ -89,11 +89,11 @@ while (!feof($ircsocket)) {
     $com3 = $output[2]; //Params
     
     // Parse Command
-    $cmd_com = explode(" ", $com2); //[0] - Originator, [1] Command / Status, [2] (optional) target
+    $cmd_com = explode(" ", $com2); //[0] - Originator, [1] Command / Status, [2+] (optional)
     
     // play PING PONG with the irc server
-    if ($output[0] == "PING ")
-        pong($output[1]);
+    if ($com1 == "PING ")
+        pong($com2);
 
     // if username is in use
     if ($cmd_com[1] == "433")
@@ -119,28 +119,41 @@ while (!feof($ircsocket)) {
         delay_priv_msg($cmd_com[3], $hello, "5");
     
     // split some further variables
-    $infos = explode("!~", $output[1]);
-    $name = $infos[0];
-    $begin = explode(" ", $output[1]);
-    $chan = $begin[2];
-    $command = $begin[1];
+    // parse message sender's identity
+    $sender_nick = null;
+    $sender_user = null;
+    $sender_host = null;
+    
+    $msg_originator = $cmd_com[0];
+    $msg_originator_components = explode("!", $msg_originator, 2);
+    if (count($msg_originator_components) > 1) {
+        $sender_nick = $msg_originator_components[0];
+        
+        $msg_originator_components = explode("@", $msg_originator_components[1], 2);
+        if (count($msg_originator_components) > 1) {
+            $sender_user = $msg_originator_components[0];
+            $sender_host = $msg_originator_components[1];
+        }
+    }
+    
+    $chan = $cmd_com[2];
+    $command = $cmd_com[1];
 
-    // create $message
-    $message = $output[2];
+    // obtain $message
+    $message = $com3;
 
     // now execute the modules
     foreach ($modules as $exec_module) {
         if (preg_match("/!triggers/i", $message))
-            $exec_module->getTriggers($name);
+            $exec_module->getTriggers($sender_nick);
         else
-            $exec_module->runModule($incoming, $com1, $com2, $com3, $name, $begin, $chan, $command, $message);
+            $exec_module->runModule($incoming, $com1, $com2, $com3, $sender_nick, $cmd_com, $chan, $command, $message);
     }
 
     // rejoin
     if ($rejoin == "1") {
-        if (preg_match("/KICK/", $output[1])) {
-            $kicked_channel = explode(" ", $output[1]);
-            join_channel($kicked_channel[2]);
+        if ($cmd_com[1] == "KICK") {
+            join_channel($cmd_com[2]);
         }
     }
 
