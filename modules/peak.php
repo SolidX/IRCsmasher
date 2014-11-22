@@ -60,7 +60,7 @@
 
             //on join => check for users
             $join_signs = explode(" ", $com2);
-            if($join_signs[1] == "JOIN" && $name != $this->realName)
+            if($join_signs[1] == "JOIN" && $name != $this->real_name)
             {
                 names($com3);
                 $peak_datafile = "peak_" . rtrim($com3) . ".data";
