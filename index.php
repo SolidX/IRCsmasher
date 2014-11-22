@@ -84,7 +84,7 @@ while (!feof($ircsocket)) {
 
     // play PING PONG with the irc server
     if ($output[0] == "PING ") {
-        write_socket("PONG " . $output[1]);
+        pong($output[1]);
     }
 
     // if username is in use

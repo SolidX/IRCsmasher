@@ -126,4 +126,13 @@
     function quit($quit_message = "") {
         write_socket("QUIT : {$quit_message}");
     }
+    
+    /**
+     * Reply to a ping from the specified target.
+     * 
+     * @param string $target The daemon which sent a PING request and optionally the daemon to forward the reply to.
+     */
+    function pong ($target) {
+        write_socket("PONG {$target}");
+    }
 ?>
