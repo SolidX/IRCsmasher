@@ -129,10 +129,32 @@
     
     /**
      * Reply to a ping from the specified target.
+     * Do not use this if you have no idea what you are doing.
      * 
      * @param string $target The daemon which sent a PING request and optionally the daemon to forward the reply to.
      */
-    function pong ($target) {
+    function pong($target) {
         write_socket("PONG {$target}");
+    }
+    
+    /**
+     * Requests a list of visible users currently in the specified channel(s).
+     * If no channel is provided, you will receive a list of all visbile channels and users.
+     * 
+     * @param string $channel (Optional) A single channel or a comma separated list of channels.
+     */
+    function names($channel = "") {
+         write_socket(trim("NAMES {$channel}"));
+    }
+    
+    /**
+     * Kicks a user out of a channel given the bot has the necessary permisison to do so.
+     * 
+     * @param string $channel The channel you wish to kick a user from.
+     * @param string $user The nick of the user to kick.
+     * @param string $reason (Optional) Message to display as the reason for kicking the user.
+     */
+    function kick($channel, $user, $reason = "") {
+        write_socket(trim("KICK {$channel} {$user} {$reason}"));
     }
 ?>

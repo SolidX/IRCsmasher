@@ -62,7 +62,7 @@
             $join_signs = explode(" ", $com2);
             if($join_signs[1] == "JOIN" && $name != $this->realName)
             {
-                write_socket("NAMES $com3");
+                names($com3);
                 $peak_datafile = "peak_" . rtrim($com3) . ".data";
                 $peak_datapath = "modules/data/" . $peak_datafile;
 

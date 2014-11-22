@@ -40,7 +40,7 @@
             }
 
             if ($arguments[0] == "kick" && $arguments[1] == $this->botpw && $command == "PRIVMSG") {
-                write_socket("KICK $arguments[2] $arguments[3]");
+                kick($arguments[2], $arguments[3]);
             }
 
             if ($arguments[0] == "identify" && $arguments[1] == $this->botpw && $command == "PRIVMSG") {
