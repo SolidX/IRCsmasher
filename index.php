@@ -62,7 +62,14 @@ global $ircsocket;
 $ircsocket = fsockopen($server, $port, $errno, $errstr, 5);
 
 if (!$ircsocket) {
-    die("Error connecting to host.");
+    if ($enable_debugging)
+    {
+        if ($debug_html == "1")
+            echo "Error connecting to host.</pre><body></html>";
+        else
+            echo "Error connecting to host.";
+    }
+    exit(1);
 }
 
 // login
@@ -143,13 +150,23 @@ while (!feof($ircsocket)) {
         fclose($ircsocket);
         $timestamp = "";
         uptime($timestamp, $uptime_data);
-        die('Bot down.</pre>');
+        
+        if ($enable_debugging)
+        {
+            if ($debug_html == "1")
+                echo "Bot down.</pre><body></html>";
+            else
+                echo "Bot down.";
+        }
+        
+        exit(0);
     }
 
     if ($enable_debugging)
         echo $incoming;  // echos raw input from server
 }
 
+//If you're out here an unhandled error probably occured.
 if ($enable_debugging && $debug_html == "1") {
     echo "</pre><body></html>";
 }
