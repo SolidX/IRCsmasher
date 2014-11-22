@@ -82,42 +82,42 @@ while (!feof($ircsocket)) {
 
     $incoming = fgets($ircsocket, 1024);
 
-    // split $incoming
-    $output = explode(":", $incoming);
-    $com1 = $output[0];
-    $com2 = $output[1];
-    $com3 = $output[2];
-    $com4 = $output[3];
-
+    // Split $incoming
+    $output = explode(":", $incoming, 3);
+    $com1 = $output[0]; //Prefix
+    $com2 = $output[1]; //Command
+    $com3 = $output[2]; //Params
+    
+    // Parse Command
+    $cmd_com = explode(" ", $com2); //[0] - Originator, [1] Command / Status, [2] (optional) target
+    
     // play PING PONG with the irc server
-    if ($output[0] == "PING ") {
+    if ($output[0] == "PING ")
         pong($output[1]);
-    }
 
     // if username is in use
-    if (preg_match("/Nickname is already in use\./i", $com3))
+    if ($cmd_com[1] == "433")
         register_connection($nick_alternate, $real_name);
 
-    // identify
-    if ($ident != "" && preg_match("/End of \/MOTD command\./i", $com3)) {
-        identify($nickserv, $ident);
-    }
+    // if end of MOTD
+    if ($cmd_com[1] == "376")
+    {
+        // identify
+        if ($ident != "")
+            identify($nickserv, $ident);
 
-    // join channels
-    if (preg_match("/End of \/MOTD command\./i", $output[2]) || preg_match("/End of MOTD command\./i", $output[2])) {
+        // join default channels
         $channels = explode(";", $channel);
-        foreach ($channels as $room) {
-            join_channel($room);
-        }
+        foreach ($channels as $ch)
+            join_channel($ch);
     }
 
     // commands after connection is established
     // - on join say hello - 
-    $on_join = explode(" ", $com2);
-    if ($on_join[1] == "332") {
-        delay_priv_msg($on_join[3], $hello, "5");
-    }
-
+    // TODO: Fix this. Should say hi on channel join, instead says hi on recieving topic
+    if ($cmd_com[1] == "332")
+        delay_priv_msg($cmd_com[3], $hello, "5");
+    
     // split some further variables
     $infos = explode("!~", $output[1]);
     $name = $infos[0];
@@ -133,7 +133,7 @@ while (!feof($ircsocket)) {
         if (preg_match("/!triggers/i", $message))
             $exec_module->getTriggers($name);
         else
-            $exec_module->runModule($incoming, $com1, $com2, $com3, $com4, $name, $begin, $chan, $command, $message);
+            $exec_module->runModule($incoming, $com1, $com2, $com3, $name, $begin, $chan, $command, $message);
     }
 
     // rejoin

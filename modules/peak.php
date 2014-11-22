@@ -35,7 +35,7 @@
             fclose($new_peak_handle);
         }
         
-        public function runModule($output, $com1, $com2, $com3, $com4, $name, $begin, $chan, $command, $message)
+        public function runModule($output, $com1, $com2, $com3, $name, $begin, $chan, $command, $message)
         {
             $str_namelist = explode(" ", $com3);
             $count = count($str_namelist) - 1;

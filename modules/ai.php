@@ -48,7 +48,7 @@
             }
         }
 
-        public function runModule($output, $com1, $com2, $com3, $com4, $name, $begin, $chan, $command, $message)
+        public function runModule($output, $com1, $com2, $com3, $name, $begin, $chan, $command, $message)
         {
             $arguments = explode(" ",$message);  //split message into words
             

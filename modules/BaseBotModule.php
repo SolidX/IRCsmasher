@@ -72,14 +72,13 @@
          * @param string $com1
          * @param string $com2
          * @param string $com3
-         * @param string $com4
          * @param string $name
          * @param string $begin
          * @param string $chan
          * @param string $command
          * @param string $message
          */
-        abstract public function runModule($output, $com1, $com2, $com3, $com4, $name, $begin, $chan, $command, $message);
+        abstract public function runModule($output, $com1, $com2, $com3, $name, $begin, $chan, $command, $message);
         
         /**
          * Fetches the current version of this module.

@@ -19,7 +19,7 @@
             $this->module_version = "1.0";
         }
         
-        function runModule ($output, $com1, $com2, $com3, $com4, $name, $begin, $chan, $command, $message)
+        function runModule ($output, $com1, $com2, $com3, $name, $begin, $chan, $command, $message)
         {
             //if you say schnarchnase
             if (preg_match("/schnarchnase/", $message)) {
