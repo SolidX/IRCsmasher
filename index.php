@@ -25,32 +25,43 @@ if ($enable_debugging) {
 $modules = array();
 $moddir = opendir("modules/");
 
-if ($enable_debugging)
-    echo "Modules loaded: \n";
+if ($moddir) { //Ensure modules dir was loaded
+    if ($enable_debugging)
+        echo "Modules loaded: \n";
 
-while ($file = readdir($moddir)) {
-    $file_info = pathinfo($file);
-    if (isset($file_info['extension']) && $file_info['extension'] == "php" && $file_info['filename'] != "BaseBotModule") {
-        if ($enable_debugging)
-            echo $file . "\n";
-        
-        include_once("modules/" . $file);
-        $file = str_replace(".php", "", $file);
-        
-        global $ircsocket;
-        $ircsocket = null; //Socket placeholder
+    while ($file = readdir($moddir)) {
+        $file_info = pathinfo($file);
+        if (isset($file_info['extension']) && $file_info['extension'] == "php" && $file_info['filename'] != "BaseBotModule") {
+            if ($enable_debugging)
+                echo $file . "\n";
 
-        //Pseudo-module-factory
-        if (class_exists($file)) {
-            //Module must have the same filename and class name for this to work
-            $module = new $file($ircsocket, $server, $port, preg_quote($nick), $channel, $real_name, $botpw); 
-            array_push($modules, $module);
+            include_once("modules/" . $file);
+            $file = str_replace(".php", "", $file);
+
+            global $ircsocket;
+            $ircsocket = null; //Socket placeholder
+
+            //Pseudo-module-factory
+            if (class_exists($file)) {
+                //Module must have the same filename and class name for this to work
+                $module = new $file($ircsocket, $server, $port, preg_quote($nick), $channel, $real_name, $botpw); 
+                array_push($modules, $module);
+            }
         }
     }
+    closedir($moddir);
+    if ($enable_debugging)
+        echo "\n";
+} else {
+    if ($enable_debugging)
+    {
+        if ($debug_html == "1")
+            echo "Error loading modules directory.</pre><body></html>";
+        else
+            echo "Error loading modules directory.";
+    }
+    exit(2);
 }
-closedir($moddir);
-if ($enable_debugging)
-    echo "\n";
 
 // uptime data
 $uptime_data = "modules/data/uptime.data";
@@ -79,7 +90,6 @@ register_connection($nick, $real_name);
 
 // main function
 while (!feof($ircsocket)) {
-
     $incoming = fgets($ircsocket, 1024);
 
     // Split $incoming
