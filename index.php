@@ -92,22 +92,31 @@ register_connection($nick, $real_name);
 while (!feof($ircsocket)) {
     $incoming = fgets($ircsocket, 1024);
 
+    if ($enable_debugging)
+        echo $incoming;  // echos raw input from server
+
     // Split $incoming
     $output = explode(":", $incoming, 3);
     $com1 = $output[0]; //Prefix
-    $com2 = $output[1]; //Command
-    $com3 = $output[2]; //Params
-    
-    // Parse Command
-    $cmd_com = explode(" ", $com2); //[0] - Originator, [1] Command / Status, [2+] (optional)
+    $com2 = isset($output[1]) ? $output[1] : ""; //Command
+    $com3 = isset($output[2]) ? $output[2] : ""; //Params
     
     // play PING PONG with the irc server
-    if ($com1 == "PING ")
+    if ($com1 == "PING ") {
         pong($com2);
+        continue;
+    }
 
+    // Parse Command
+    $cmd_com = explode(" ", $com2); //[0] - Originator, [1] Command / Status, [2+] (optional)
+    if (count($cmd_com) < 2)
+        continue; //Surpress ghosts in the connection. I don't know why this works :/
+    
     // if username is in use
-    if ($cmd_com[1] == "433")
+    if ($cmd_com[1] == "433") {
         register_connection($nick_alternate, $real_name);
+        continue;
+    }
 
     // if end of MOTD
     if ($cmd_com[1] == "376")
@@ -120,13 +129,16 @@ while (!feof($ircsocket)) {
         $channels = explode(";", $channel);
         foreach ($channels as $ch)
             join_channel($ch);
+        
+        continue;
     }
 
     // commands after connection is established
     // - on join say hello - 
-    // TODO: Fix this. Should say hi on channel join, instead says hi on recieving topic
-    if ($cmd_com[1] == "332")
+    if ($cmd_com[1] == "332") {
         delay_priv_msg($cmd_com[3], $hello, "5");
+        continue;
+    }
     
     // split some further variables
     // parse message sender's identity
@@ -184,9 +196,6 @@ while (!feof($ircsocket)) {
         
         exit(0);
     }
-
-    if ($enable_debugging)
-        echo $incoming;  // echos raw input from server
 }
 
 //If you're out here an unhandled error probably occured.
