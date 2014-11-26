@@ -47,7 +47,7 @@
                 $peak_datafile = "peak_" . $namelist_code[4] . ".data";
                 $peak_datapath = "modules/data/" . $peak_datafile;
 
-                if(filesize($peak_datapath) > "1")
+                if(file_exists($peak_datapath) && filesize($peak_datapath) > "1")
                 {
                     $new_peak_data_split = $this->peak_read($peak_datapath);
 
@@ -66,7 +66,7 @@
                 $peak_datafile = "peak_" . rtrim($com3) . ".data";
                 $peak_datapath = "modules/data/" . $peak_datafile;
 
-                if(filesize($peak_datapath) > "1")
+                if(file_exists($peak_datapath) && filesize($peak_datapath) > "1")
                 {
                     $new_peak_data_split = $this->peak_read($peak_datapath);
 
