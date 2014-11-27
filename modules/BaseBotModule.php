@@ -30,6 +30,8 @@
         protected $real_name;
         /** @var string */
         protected $botpw;
+        /** @var Logger */
+        protected $log;
         /** @var string */
         protected $module_version;
 
@@ -43,10 +45,11 @@
          * @param string $channels Semicolon separated list of channels the bot joins on start up.
          * @param string $realName Bot's "real" name
          * @param string $botPword Bot password
+         * @param Logger $log Log to write any information to.
          */
-        public function __construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword)
+        public function __construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword, Logger $log)
         {
-            $this->module_version = "0.1";
+            $this->module_version = "0.2";
 
             $this->ircsocket = $socket;
             $this->server = $ircserver;
@@ -55,6 +58,7 @@
             $this->channels = explode(";", $channels);
             $this->real_name = $realName;
             $this->botpw = $botPword;
+            $this->log = $log;
         }
         
         /**

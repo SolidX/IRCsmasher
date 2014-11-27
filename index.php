@@ -11,29 +11,33 @@
 // includes
 require_once('inc/config.php');
 require_once('inc/functions.php');
+require_once('logger/SimpleLogger.php');
+require_once('logger/HTMLLogger.php');
 
 set_time_limit(0); //set unlimited maximum execution time
-$enable_debugging = ($debug_mode == "on");
 
-if ($enable_debugging) {
-    if ($debug_html == "1")
-        echo "<html><head><title>IRCsmasher Debug Mode</title></head><body bgcolor=\"\#000000\" text=\"\#ffffff\"><pre>";
-    echo "IRCmasher started. Have a lot of fun ... \n";
-}
+//Start up logger
+if ($debug_html == "1")
+    $log = new HTMLLogger();
+else
+    $log = new SimpleLogger();
+
+if (($debug_mode == "on"))
+    $log->enable_logging();
+
+$log->write(Logger::LOGMSG_INFO, "IRCmasher started. Have a lot of fun...");
 
 // include all modules
 $modules = array();
 $moddir = opendir("modules/");
 
 if ($moddir) { //Ensure modules dir was loaded
-    if ($enable_debugging)
-        echo "Modules loaded: \n";
+    $log->write(Logger::LOGMSG_INFO, "Modules loaded:");
 
     while ($file = readdir($moddir)) {
         $file_info = pathinfo($file);
         if (isset($file_info['extension']) && $file_info['extension'] == "php" && $file_info['filename'] != "BaseBotModule") {
-            if ($enable_debugging)
-                echo $file . "\n";
+            $log->write(Logger::LOGMSG_INFO, "\t{$file}");
 
             include_once("modules/" . $file);
             $file = str_replace(".php", "", $file);
@@ -44,22 +48,15 @@ if ($moddir) { //Ensure modules dir was loaded
             //Pseudo-module-factory
             if (class_exists($file)) {
                 //Module must have the same filename and class name for this to work
-                $module = new $file($ircsocket, $server, $port, preg_quote($nick), $channel, $real_name, $botpw); 
+                $module = new $file($ircsocket, $server, $port, preg_quote($nick), $channel, $real_name, $botpw, $log); 
                 array_push($modules, $module);
             }
         }
     }
     closedir($moddir);
-    if ($enable_debugging)
-        echo "\n";
+    $log->write(Logger::LOGMSG_INFO, "\n");
 } else {
-    if ($enable_debugging)
-    {
-        if ($debug_html == "1")
-            echo "Error loading modules directory.</pre><body></html>";
-        else
-            echo "Error loading modules directory.";
-    }
+    $log->write(Logger::LOGMSG_ERROR, "Error loading modules directory.");
     exit(2);
 }
 
@@ -73,13 +70,7 @@ global $ircsocket;
 $ircsocket = fsockopen($server, $port, $errno, $errstr, 5);
 
 if (!$ircsocket) {
-    if ($enable_debugging)
-    {
-        if ($debug_html == "1")
-            echo "Error connecting to host.</pre><body></html>";
-        else
-            echo "Error connecting to host.";
-    }
+    $log->write(Logger::LOGMSG_ERROR, "Error connecting to IRC server host.");
     exit(1);
 }
 
@@ -92,8 +83,7 @@ register_connection($nick, $real_name);
 while (!feof($ircsocket)) {
     $incoming = fgets($ircsocket, 1024);
 
-    if ($enable_debugging)
-        echo $incoming;  // echos raw input from server
+    $log->write(Logger::LOGMSG_INFO, $incoming); // echos raw input from server
 
     // Split $incoming
     $output = explode(":", $incoming, 3);
@@ -186,20 +176,10 @@ while (!feof($ircsocket)) {
         $timestamp = "";
         uptime($timestamp, $uptime_data);
         
-        if ($enable_debugging)
-        {
-            if ($debug_html == "1")
-                echo "Bot down.</pre><body></html>";
-            else
-                echo "Bot down.";
-        }
-        
+        $log->write(Logger::LOGMSG_INFO, "Bot down.");
         exit(0);
     }
 }
 
 //If you're out here an unhandled error probably occured.
-if ($enable_debugging && $debug_html == "1") {
-    echo "</pre><body></html>";
-}
 ?>

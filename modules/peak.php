@@ -12,9 +12,9 @@
 
     class Peak extends BaseBotModule
     {
-        public function __construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword)
+        public function __construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword, Logger $log)
         {
-            parent::__construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword);
+            parent::__construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword, $log);
             $this->module_version = "1.0";
         }
         
