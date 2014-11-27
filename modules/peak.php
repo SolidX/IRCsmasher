@@ -94,9 +94,14 @@
             }
         }
         
-        public function getTriggers($user)
+        /**
+         * Enumerates any triggers this module may contain to a requesting user.
+         * 
+         * @param string $target Nick of the usre to respond to
+         */
+        public function getTriggers($target)
         {
-            notice_msg(parent::parseName($user), "Get Channel Peak Users: !peak");
+            notice_msg($target, "Get Channel Peak Users: !peak");
         }
     }
 ?>

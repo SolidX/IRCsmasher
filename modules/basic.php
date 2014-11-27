@@ -105,13 +105,16 @@
             }
         }
         
-        public function getTriggers($user)
+        /**
+         * Enumerates any triggers this module may contain to a requesting user.
+         * 
+         * @param string $target Nick of the usre to respond to
+         */
+        public function getTriggers($target)
         {
-            $user = parent::parseName($user);
-
-            notice_msg($user, "Get Current Time: !time");
-            notice_msg($user, "Get Current Date: !date");
-            notice_msg($user, "Get Bot's Uptime: !uptime");
+            notice_msg($target, "Get Current Time: !time");
+            notice_msg($target, "Get Current Date: !date");
+            notice_msg($target, "Get Bot's Uptime: !uptime");
         }
     }
 ?>

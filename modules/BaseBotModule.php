@@ -49,7 +49,7 @@
          */
         public function __construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword, Logger $log)
         {
-            $this->module_version = "0.2";
+            $this->module_version = "0.3";
 
             $this->ircsocket = $socket;
             $this->server = $ircserver;
@@ -62,23 +62,10 @@
         }
         
         /**
-         * Cleans up a provided message's sender's nick.
-         * 
-         * @param string $name
-         * @return string
-         */
-        public function parseName($name)
-        {
-            if (strchr($name, "!"))
-                return substr(trim($name), 0, strpos(trim($name), "!"));
-            return $name;
-        }
-        
-        /**
          * Sends a notification to a user who uses the !triggers trigger explaining any triggers that are made available by this module.
-         * @param string $user
+         * @param string $target
          */
-        abstract public function getTriggers($user);
+        abstract public function getTriggers($target);
         
         /**
          * Takes a message, parses it to see if it's activated this module's functionality and then executes the necessary functionality.

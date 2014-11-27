@@ -89,7 +89,12 @@
             #  }
         }
         
-        public function getTriggers($user)
+        /**
+         * Enumerates any triggers this module may contain to a requesting user.
+         * 
+         * @param string $target Nick of the usre to respond to
+         */
+        public function getTriggers($target)
         {
             //TODO: Implement getTriggers
             return;

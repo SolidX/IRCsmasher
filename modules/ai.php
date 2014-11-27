@@ -72,10 +72,15 @@
                 $this->iq_function($name, $begin, $chan, $command, $message);
         }
 
-        public function getTriggers($user)
+        /**
+         * Enumerates any triggers this module may contain to a requesting user.
+         * 
+         * @param string $target Nick of the usre to respond to
+         */
+        public function getTriggers($target)
         {
-            notice_msg(parent::parseName($user), "Silence bot AI: !mute");
-            notice_msg(parent::parseName($user), "Un-mute bot AI: !unmute");
+            notice_msg($target, "Silence bot AI: !mute");
+            notice_msg($target, "Un-mute bot AI: !unmute");
             //TODO: Add messages for remaining Triggers
             return;
         }
