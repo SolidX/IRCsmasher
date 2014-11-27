@@ -72,7 +72,7 @@
 
                 if ($arguments[1] == "all")
                 {
-                    foreach($this->channel as $target)
+                    foreach($this->channels as $target)
                     {
                         priv_msg($target, $message);
                     }

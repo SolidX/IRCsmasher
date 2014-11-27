@@ -24,8 +24,8 @@
         protected $port;
         /** @var string */
         protected $nick;
-        /** @var string */
-        protected $channel;
+        /** @var string[] */
+        protected $channels;
         /** @var string */
         protected $real_name;
         /** @var string */
@@ -52,7 +52,7 @@
             $this->server = $ircserver;
             $this->port = $portNumber;
             $this->nick = $myNick;
-            $this->channel = explode(";", $channels);
+            $this->channels = explode(";", $channels);
             $this->real_name = $realName;
             $this->botpw = $botPword;
         }
