@@ -1,2 +1,4 @@
 modules/data/uptime.data
 modules/data/peak_#*.data
+web.config
+inc/config.ini

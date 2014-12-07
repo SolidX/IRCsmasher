@@ -28,7 +28,7 @@ else
 if ($configuration->get_setting(ConfigManager::DEBUG_MODE) === "1")
     $log->enable_logging();
 
-$log->write(Logger::LOGMSG_INFO, "IRCmasher started. Have a lot of fun...");
+$log->write(Logger::LOGMSG_INFO, "IRCsmasher started. Have a lot of fun...");
 
 // include all modules
 $modules = array();

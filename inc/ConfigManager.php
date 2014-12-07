@@ -1,4 +1,13 @@
 <?php
+    /**************************************************
+     *
+     * IRCsmasher - based on IRCmasher by Ralf Oechsner and Volker Latainski
+     *
+     * @Project: IRCsmasher
+     * @License: GNU General Public License v2
+     *
+     **************************************************/
+
     class ConfigManager
     {
         /** @var array Configuration information (may contain runtime changes) */
