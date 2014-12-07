@@ -1,17 +1,23 @@
-[IRCmasher v0.21]
-
-- added some commands/actions:
-    see http://ircmasher.latainski.de/docs/commands.htm for more
-- modules/
-    new modules: peak.php
-    obsolet modules: linux.php(joined basic.php)
-- some little changes on the core.
-
-
-[IRCmasher v0.20]
-- Some bug fixes: Joining a channel should work now everytime, hello message too.
-- [MODULE] admin.php: module for some administrative stuff.
-- channel rejoin.
-- added ACTIONS to a.php: the bot can do the '/me barfs on the floor' command ;D
-- cleand up the code a bit.
-- the rest I don't know anymore.
+[IRCsmasher v1.0.0]
+- Forked IRCmasher
+- Refactored IRCmasher.
+    Removed deprecated function calls
+    Documented core functions
+    Added common IRC connection actions to functions.php
+    Removed unused functions and irrelevant comments
+    Refactored modules to be class based and have a unified interface.
+    Switched config file to .ini format
+    Consolidated message parsing logic
+- Fixed bugs with Admin, Peak and AI modules.
+- Added functionality to Admin module
+    Ability to have bot join channels
+    Ability to have the bot say something to all channels it is currently in
+- Added modular Logging solutions
+    Console logging
+    HTML logging
+- Added global configuration management
+    Tracking changes to bot nick
+    Tracking changes to channels the bot is currently in
+- Made the bot compatible with PHP 5.5+
+- Added error exit codes
+- Updated README
