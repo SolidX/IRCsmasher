@@ -18,67 +18,62 @@
 	
         /** @var resource */
         protected $ircsocket;
-        /** @var string */
-        protected $server;
-        /** @var string */
-        protected $port;
-        /** @var string */
-        protected $nick;
-        /** @var string */
-        protected $channel;
-        /** @var string */
-        protected $real_name;
-        /** @var string */
-        protected $botpw;
+        /** @var ConfigManager */
+        protected $configuration;
+        /** @var Logger */
+        protected $log;
         /** @var string */
         protected $module_version;
 
-        public function __construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword)
-        {
-            $this->module_version = "0.1";
-
-            $this->ircsocket = $socket;
-            $this->server = $ircserver;
-            $this->port = $portNumber;
-            $this->nick = $myNick;
-            $this->channel = explode(";", $channels);
-            $this->real_name = $realName;
-            $this->botpw = $botPword;
-        }
-        
         /**
+         * Creates a new instance of this module.
          * 
-         * @param string $name
-         * @return string
+         * @param resource $socket The resource representing an open connection to an IRC server.
+         * @param ConfigManager $config The ConfigManager which has all the current bot settings.
+         * @param Logger $log Log to write any information to.
          */
-        public function parseName($name)
+        public function __construct($socket, ConfigManager $config, Logger $log)
         {
-            if (strchr($name, "!"))
-                return substr(trim($name), 0, strpos(trim($name), "!"));
-            return $name;
+            $this->module_version = "1.0.0";
+            $this->configuration = $config;
+            $this->log = $log;
         }
         
         /**
          * Sends a notification to a user who uses the !triggers trigger explaining any triggers that are made available by this module.
-         * @param string $user
+         * @param string $target
          */
-        abstract public function getTriggers($user);
+        abstract public function getTriggers($target);
         
         /**
          * Takes a message, parses it to see if it's activated this module's functionality and then executes the necessary functionality.
          * 
-         * @param string $output
-         * @param string $com1
-         * @param string $com2
-         * @param string $com3
-         * @param string $com4
-         * @param string $name
-         * @param string $begin
-         * @param string $chan
-         * @param string $command
-         * @param string $message
+         * @param string $output Raw incoming message from the IRC server
+         * @param string $com1 Prefix component of the raw message (usually empty)
+         * @param string $com2 Command component of the raw message (typically contains sender, status code / command & message target info)
+         * @param string $com3 Params component of the raw message (typically contains a user's message)
+         * @param string $name Name of the message sender (if available)
+         * @param string[] $begin An array of the components constituting $com2
+         * @param string $chan The target the message was sent to (either a channel or the bot's user name)
+         * @param string $command The command used to send the message (ex. PRIVMSG, NOTICE, ect.)
+         * @param string $message The body of a user's message
          */
-        abstract public function runModule($output, $com1, $com2, $com3, $com4, $name, $begin, $chan, $command, $message);
+        abstract public function runModule($output, $com1, $com2, $com3, $name, $begin, $chan, $command, $message);
+        
+        /**
+         * Returns the target to reply to when receiving a message.
+         * If the message was directly addressed to the bot you should be replying to the user who sent it.
+         * Otherwise you'll be replying to a channel.
+         * 
+         * @param string $chan The target the message was sent to (either a channel or the bot's user name)
+         * @param string $name Name of the message sender
+         * @return string
+         */
+        public function determineReplyTarget($chan, $name) {
+            if ($chan == $this->configuration->get_setting(ConfigManager::BOT_NICK))
+                return $name;
+            return $chan;
+        }
         
         /**
          * Fetches the current version of this module.

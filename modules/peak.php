@@ -12,10 +12,10 @@
 
     class Peak extends BaseBotModule
     {
-        public function __construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword)
+        public function __construct($socket, ConfigManager $config, Logger $log)
         {
-            parent::__construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword);
-            $this->module_version = "1.0";
+            parent::__construct($socket, $config, $log);
+            $this->module_version = "1.0.0";
         }
         
         private function peak_read($peak_datapath)
@@ -35,7 +35,7 @@
             fclose($new_peak_handle);
         }
         
-        public function runModule($output, $com1, $com2, $com3, $com4, $name, $begin, $chan, $command, $message)
+        public function runModule($output, $com1, $com2, $com3, $name, $begin, $chan, $command, $message)
         {
             $str_namelist = explode(" ", $com3);
             $count = count($str_namelist) - 1;
@@ -47,7 +47,7 @@
                 $peak_datafile = "peak_" . $namelist_code[4] . ".data";
                 $peak_datapath = "modules/data/" . $peak_datafile;
 
-                if(filesize($peak_datapath) > "1")
+                if(file_exists($peak_datapath) && filesize($peak_datapath) > "1")
                 {
                     $new_peak_data_split = $this->peak_read($peak_datapath);
 
@@ -60,17 +60,17 @@
 
             //on join => check for users
             $join_signs = explode(" ", $com2);
-            if($join_signs[1] == "JOIN" && $name != $real_name)
+            if($join_signs[1] == "JOIN" && $name != $this->configuration->get_setting(ConfigManager::BOT_REALNAME))
             {
-                write_socket("NAMES $com3");
+                names($com3);
                 $peak_datafile = "peak_" . rtrim($com3) . ".data";
                 $peak_datapath = "modules/data/" . $peak_datafile;
 
-                if(filesize($peak_datapath) > "1")
+                if(file_exists($peak_datapath) && filesize($peak_datapath) > "1")
                 {
                     $new_peak_data_split = $this->peak_read($peak_datapath);
 
-                    if($peak_data_split[0] < $count)
+                    if($new_peak_data_split[0] < $count)
                     {
                         $this->peak_write($count, $timestamp, $peak_datapath);
                     }
@@ -94,9 +94,14 @@
             }
         }
         
-        public function getTriggers($user)
+        /**
+         * Enumerates any triggers this module may contain to a requesting user.
+         * 
+         * @param string $target Nick of the usre to respond to
+         */
+        public function getTriggers($target)
         {
-            notice_msg(parent::parseName($user), "Get Channel Peak Users: !peak");
+            notice_msg($target, "Get Channel Peak Users: !peak");
         }
     }
 ?>

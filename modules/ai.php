@@ -21,16 +21,16 @@
         /** @var array */
         private $db;
 
-        public function __construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword)
+        public function __construct($socket, ConfigManager $config, Logger $log)
         {
-            parent::__construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword);
-            $this->module_version = "1.0";
+            parent::__construct($socket, $config, $log);
+            $this->module_version = "1.0.0";
 
             $this->iq_status = true;        
             $this->module_name = "ai";
             $this->datapath = "modules/data/";
-            $this->module_src = $datapath . $module_name . ".data";
-            $this->db = file($module_src);
+            $this->module_src = $this->datapath . $this->module_name . ".data";
+            $this->db = file($this->module_src);
         }
 
         private function iq_function($name, $begin, $chan, $command, $message) {
@@ -48,31 +48,47 @@
             }
         }
 
-        public function runModule($output, $com1, $com2, $com3, $com4, $name, $begin, $chan, $command, $message)
+        public function runModule($output, $com1, $com2, $com3, $name, $begin, $chan, $command, $message)
         {
-            /*if ($arguments[0] == "refresh_db" && $arguments[1] == $this->botpw && $command == "PRIVMSG")
+            if ($command != "PRIVMSG")
+                return; //Ensure these commands can only be triggered by messages from users
+            
+            $target = $this->determineReplyTarget($chan, $name);
+            $arguments = explode(" ",$message);  //split message into words
+            $bot_passwd = $this->configuration->get_setting(ConfigManager::BOT_ADMIN_PASSWD);
+            
+            /*if ($arguments[0] == "refresh_db" && $arguments[1] == $bot_passwd)
             {
                 fclose($db);  //close db
                 unset($db);
                 $this->db = file($this->module_src);  //and read it again
             }*/
 
-            if ($arguments[0] == '!mute' && $arguments[1] == $this->botpw && $command == "PRIVMSG")
+            if ($arguments[0] == '!mute' && $arguments[1] == $bot_passwd)
             {
                 $this->iq_status = false;
-                priv_msg($chan, "I'll be quiet now.");
+                priv_msg($target, "I'll be quiet now.");
             }
 
-            if ($arguments[0] == '!unmute' && $arguments[1] == $this->botpw && $command == "PRIVMSG")
+            if ($arguments[0] == '!unmute' && $arguments[1] == $bot_passwd)
+            {
                 $this->iq_status = true;
+                priv_msg($target, "Yay!");
+            }
 
             if (!isset($this->iq_status) || $this->iq_status)
-                $this->iq_function($name, $begin, $chan, $command, $message);
+                $this->iq_function($name, $begin, $target, $command, $message);
         }
 
-        public function getTriggers($user)
+        /**
+         * Enumerates any triggers this module may contain to a requesting user.
+         * 
+         * @param string $target Nick of the user to respond to
+         */
+        public function getTriggers($target)
         {
-            //TODO: Implement getTriggers
+            notice_msg($target, "Silence bot AI: !mute");
+            notice_msg($target, "Un-mute bot AI: !unmute");
             return;
         }
     }
