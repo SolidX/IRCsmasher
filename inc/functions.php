@@ -8,49 +8,77 @@
      *
      **************************************************/
 
-    // Function to send the commands to the server
+    /**
+     * Writes a raw message to the IRC connection socket.
+     * 
+     * @global resource $ircsocket
+     * @param string $param The message to write
+     */
     function write_socket($param) {
         global $ircsocket;
         fputs($ircsocket, "$param\n\r");
     }
     
-    // function to send an ACTION message
+    /**
+     * Sends an action message to the specified target.
+     * 
+     * @param string $target A channel to send the action mesaage to.
+     * @param string $text The action message to perform (eg "slaps someone with a fish")
+     */
     function action_msg($target, $text) {
         write_socket("PRIVMSG ".$target." :\001ACTION $text\001");
     }
 
-    // function to send a NOTICE message
+    /**
+     * Sends a notice to a specified target.
+     * 
+     * @param string $target A person or channel to send a notice to.
+     * @param string $text The message to send as a notice.
+     */
     function notice_msg($target, $text) {
         write_socket("NOTICE ".$target." :$text");
     }
 
-    // function to send a private message to nick
-    function priv_msg($target, $text, $lag = false) {
-        if ($lag)
-            time_lag($text);
+    /**
+     * Sends a standard message to the specified target with an optional amount of waiting before hand.
+     * 
+     * @param string $target A person or channel to send a message to.
+     * @param string $text The message to send.
+     * @param int $lag An optional delay before sending the message in milliseconds.
+     */
+    function priv_msg($target, $text) {
         write_socket("PRIVMSG {$target} :{$text}");
     }
 
-    // function to send a private message with low lag
+    /**
+     * Sends a standard message to the specified target with a required amount of waiting before hand.
+     * 
+     * @param string $target A person or channel to send a message to.
+     * @param string $text The message to send.
+     * @param int $lag A mandatory delay before sending the message in milliseconds.
+     */
     function delay_priv_msg($target, $text, $delay) {
         sleep($delay);
-        write_socket("PRIVMSG {$target} :{$text}");
-        return 0;
+        priv_msg($target, $text);
     }
 
-    function write_action($action) {
-        global $ircsocket;
-        sleep(2);
-        fputs($ircsocket, $action . "\n\r");
-    }
-
-    //make it look more realistic
+    /**
+     * Simulates a human's typing speed messages.
+     * Warning: This is a blocking call, do not use it on long messages or if your bot is running in an environment with frequent messages.
+     * 
+     * @param type $text The message to type.
+     */
     function time_lag($text) {
         $delay = (strlen($text)) / ($configuration->get_setting("strokes") / 60);
         sleep($delay);
     }
 
-    //create the timestamp for uptime
+    /**
+     * Writes the uptime timestamp to the uptime tracking file.
+     * 
+     * @param int $timestamp
+     * @param string $uptime_data Path to uptime tracking file.
+     */
     function uptime($timestamp, $uptime_data) {
         $handle = fopen($uptime_data, "w");
         fwrite($handle, $timestamp);
