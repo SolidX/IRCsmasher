@@ -12,14 +12,16 @@
 
     class NNDLinkPreview extends BaseBotModule
     {
-        public function __construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword)
+        public function __construct($socket, ConfigManager $config, Logger $log)
         {
-            parent::__construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword);
-            $this->module_version = "1.0";
+            parent::__construct($socket, $config, $log);
+            $this->module_version = "1.0.1";
         }
         
-        public function runModule($output, $com1, $com2, $com3, $com4, $name, $begin, $chan, $command, $message)
+        public function runModule($output, $com1, $com2, $com3, $name, $begin, $chan, $command, $message)
         {
+            $target = $this->determineReplyTarget($chan, $name);
+            
             if (preg_match("/nicovideo\.jp\/watch\/(sm|nm)/i", $output))
             {
                 $startPt = stripos($output, "watch/") + 6;
@@ -28,13 +30,7 @@
                 while(!ctype_alnum($code))
                     $code = substr($code, 0, strlen($code) - 1);
 
-                if (preg_match("/#[A-Za-z0-9_\-~#]+/i", $chan))
-                    $this->getVidData($code, $chan);
-                else
-                {
-                    $name = parent::parseName($name);
-                    $this->getVidData($code, $name);
-                }
+                $this->getVidData($code, $target);
                 return;
             }
         }
@@ -69,7 +65,12 @@
             }
         }
         
-        public function getTriggers($user)
+        /**
+         * Enumerates any triggers this module may contain to a requesting user.
+         * 
+         * @param string $target Nick of the user to respond to
+         */
+        public function getTriggers($target)
         {
             return;
         }
