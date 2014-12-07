@@ -53,6 +53,7 @@
             if ($command != "PRIVMSG")
                 return; //Ensure these commands can only be triggered by messages from users
             
+            $target = $this->determineReplyTarget($chan, $name);
             $arguments = explode(" ",$message);  //split message into words
             $bot_passwd = $this->configuration->get_setting(ConfigManager::BOT_ADMIN_PASSWD);
             
@@ -66,26 +67,28 @@
             if ($arguments[0] == '!mute' && $arguments[1] == $bot_passwd)
             {
                 $this->iq_status = false;
-                priv_msg($chan, "I'll be quiet now.");
+                priv_msg($target, "I'll be quiet now.");
             }
 
             if ($arguments[0] == '!unmute' && $arguments[1] == $bot_passwd)
+            {
                 $this->iq_status = true;
+                priv_msg($target, "Yay!");
+            }
 
             if (!isset($this->iq_status) || $this->iq_status)
-                $this->iq_function($name, $begin, $chan, $command, $message);
+                $this->iq_function($name, $begin, $target, $command, $message);
         }
 
         /**
          * Enumerates any triggers this module may contain to a requesting user.
          * 
-         * @param string $target Nick of the usre to respond to
+         * @param string $target Nick of the user to respond to
          */
         public function getTriggers($target)
         {
             notice_msg($target, "Silence bot AI: !mute");
             notice_msg($target, "Un-mute bot AI: !unmute");
-            //TODO: Add messages for remaining Triggers
             return;
         }
     }

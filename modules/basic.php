@@ -21,52 +21,54 @@
         
         function runModule ($output, $com1, $com2, $com3, $name, $begin, $chan, $command, $message)
         {
+            $target = $this->determineReplyTarget($chan, $name);
+            
             //if you say schnarchnase
             if (preg_match("/schnarchnase/", $message)) {
-                delay_priv_msg($chan, "schnarchnasen sind cool!", 2);
+                delay_priv_msg($target, "schnarchnasen sind cool!", 2);
             }
 
             //and now the masters ;)
             if (preg_match("/whois\smaniacbrain/", $message)) {
-                priv_msg($chan, "maniacbrain is one of my masters and creators");
+                priv_msg($target, "maniacbrain is one of my masters and creators");
             }
             if (preg_match("/whois\srtf/", $message)) {
-                priv_msg($chan, "rtf is one of my masters and creators");
+                priv_msg($target, "rtf is one of my masters and creators");
             }
             if (preg_match("/whois\sircmasher/", $message)) {
-                priv_msg($chan, "ircmasher is the greatest masher in the whole irc ;)");
+                priv_msg($target, "ircmasher is the greatest masher in the whole irc ;)");
             }
 
             //whatis words
             if (preg_match("/whatis\s[Rr][Tt][Ff][Mm]/", $message)) {
-                priv_msg($chan, "rtfm = Read the Fuckin Manual!!!");
+                priv_msg($target, "rtfm = Read the Fuckin Manual!!!");
                 return;
             }
             if (preg_match("/whatis\s[Ss][Tt][Ff][Ww]/", $message)) {
-                priv_msg($chan, "stfw = Search the Fuckin Web!!!");
+                priv_msg($target, "stfw = Search the Fuckin Web!!!");
                 return;
             }
 
             //entries of the old linux.php
             if (preg_match("/whatis\s[Ll]inux/", $message)) {
-                priv_msg($chan, "Linux is a free Unix-type operating system originally created by Linus Torvalds with the assistance of developers around the world... and it's the best operating systems in the world :-)");
+                priv_msg($target, "Linux is a free Unix-type operating system originally created by Linus Torvalds with the assistance of developers around the world... and it's the best operating systems in the world :-)");
             }
             if (preg_match("/whatis\s[Gg][Nn][Uu]/", $message)) {
-                priv_msg($chan, "GNU is a recursive acronym for \"GNU's Not Unix\"; it is pronounced \"guh-noo\".");
+                priv_msg($target, "GNU is a recursive acronym for \"GNU's Not Unix\"; it is pronounced \"guh-noo\".");
             }
             if (preg_match("/paragraph/", $message)) {
-                priv_msg($chan, "§1. Ich habe immer Recht! §2. Sollte ich einmal nicht Recht haben so tritt automatisch §1 in Kraft...");
+                priv_msg($target, "§1. Ich habe immer Recht! §2. Sollte ich einmal nicht Recht haben so tritt automatisch §1 in Kraft...");
             }
 
             //!time/!date actions
             if (preg_match("/!time\b/i", $message)) {
                 $time = date("g:i:s A");
-                delay_priv_msg($chan, "$time", 2);
+                delay_priv_msg($target, "$time", 2);
                 return;
             }
             if (preg_match("/!date\b/i", $message)) {
                 $date = date("D. M j, Y g:i:s A T");
-                delay_priv_msg($chan, "$date", 2);
+                delay_priv_msg($target, "$date", 2);
                 return;
             }
 
@@ -100,7 +102,7 @@
 
                 $uptime_is = "has been up for " . $dd . " days, " . $hh
                 . " hours, " . $mm . " minutes and " . $ss . " seconds";
-                action_msg($chan, $uptime_is);
+                action_msg($target, $uptime_is);
                 return;
             }
         }
@@ -108,7 +110,7 @@
         /**
          * Enumerates any triggers this module may contain to a requesting user.
          * 
-         * @param string $target Nick of the usre to respond to
+         * @param string $target Nick of the user to respond to
          */
         public function getTriggers($target)
         {

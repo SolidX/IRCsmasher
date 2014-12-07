@@ -54,11 +54,26 @@
          * @param string $com3 Params component of the raw message (typically contains a user's message)
          * @param string $name Name of the message sender (if available)
          * @param string[] $begin An array of the components constituting $com2
-         * @param string $chan The target the message was sent to (either a channel or the bot's user name
+         * @param string $chan The target the message was sent to (either a channel or the bot's user name)
          * @param string $command The command used to send the message (ex. PRIVMSG, NOTICE, ect.)
          * @param string $message The body of a user's message
          */
         abstract public function runModule($output, $com1, $com2, $com3, $name, $begin, $chan, $command, $message);
+        
+        /**
+         * Returns the target to reply to when receiving a message.
+         * If the message was directly addressed to the bot you should be replying to the user who sent it.
+         * Otherwise you'll be replying to a channel.
+         * 
+         * @param string $chan The target the message was sent to (either a channel or the bot's user name)
+         * @param string $name Name of the message sender
+         * @return string
+         */
+        public function determineReplyTarget($chan, $name) {
+            if ($chan == $this->configuration->get_setting(ConfigManager::BOT_NICK))
+                return $name;
+            return $chan;
+        }
         
         /**
          * Fetches the current version of this module.
