@@ -46,8 +46,7 @@
 
     //make it look more realistic
     function time_lag($text) {
-        global $strokes;
-        $delay = (strlen($text)) / ($strokes / 60);
+        $delay = (strlen($text)) / ($configuration->get_setting("strokes") / 60);
         sleep($delay);
     }
 
@@ -71,12 +70,12 @@
      /**
      * Changes user's nickname to the specified nick.
      * 
-     * @param string $nick The desired username / nickname to use
+     * @param string $new_nick The desired username / nickname to use
      */
-    function change_nick($nick) {
-        write_socket("NICK {$nick}");
+    function change_nick($new_nick) {      
+        write_socket("NICK {$new_nick}");
+        ConfigManager::getInstance()->set_setting(ConfigManager::BOT_NICK, $new_nick);
         //TODO: Handle nick name already in use
-        //TODO: Ensure that the bot is aware of it's own nick change (for any modules that depend on it).
     }
     
     /**
@@ -111,10 +110,17 @@
      */
     function join_channel($channel, $key = null) {
         //TODO: Add some sort of validation to ensure channel is just a single one.
+        $channel = trim($channel);
+        
         if ($key === null)
             write_socket("JOIN $channel");
         else
             write_socket("JOIN $channel $key");
+        
+        $current_channels = ConfigManager::getInstance()->get_setting(ConfigManager::BOT_CHANNELS);
+        array_push($current_channels, $channel);
+        ConfigManager::getInstance()->set_setting(ConfigManager::BOT_CHANNELS, array_unique($current_channels));
+        
         sleep(1);
     }
     

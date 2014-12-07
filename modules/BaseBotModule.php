@@ -18,18 +18,8 @@
 	
         /** @var resource */
         protected $ircsocket;
-        /** @var string */
-        protected $server;
-        /** @var string */
-        protected $port;
-        /** @var string */
-        protected $nick;
-        /** @var string[] */
-        protected $channels;
-        /** @var string */
-        protected $real_name;
-        /** @var string */
-        protected $botpw;
+        /** @var ConfigManager */
+        protected $configuration;
         /** @var Logger */
         protected $log;
         /** @var string */
@@ -39,25 +29,13 @@
          * Creates a new instance of this module.
          * 
          * @param resource $socket The resource representing an open connection to an IRC server.
-         * @param string $ircserver IRC server host name
-         * @param string $portNumber IRC server port number
-         * @param string $myNick Bot's current nick
-         * @param string $channels Semicolon separated list of channels the bot joins on start up.
-         * @param string $realName Bot's "real" name
-         * @param string $botPword Bot password
+         * @param ConfigManager $config The ConfigManager which has all the current bot settings.
          * @param Logger $log Log to write any information to.
          */
-        public function __construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword, Logger $log)
+        public function __construct($socket, ConfigManager $config, Logger $log)
         {
-            $this->module_version = "0.3";
-
-            $this->ircsocket = $socket;
-            $this->server = $ircserver;
-            $this->port = $portNumber;
-            $this->nick = $myNick;
-            $this->channels = explode(";", $channels);
-            $this->real_name = $realName;
-            $this->botpw = $botPword;
+            $this->module_version = "1.0.0";
+            $this->configuration = $config;
             $this->log = $log;
         }
         

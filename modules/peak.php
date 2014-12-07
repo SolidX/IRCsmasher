@@ -12,10 +12,10 @@
 
     class Peak extends BaseBotModule
     {
-        public function __construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword, Logger $log)
+        public function __construct($socket, ConfigManager $config, Logger $log)
         {
-            parent::__construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword, $log);
-            $this->module_version = "1.0";
+            parent::__construct($socket, $config, $log);
+            $this->module_version = "1.0.0";
         }
         
         private function peak_read($peak_datapath)
@@ -60,7 +60,7 @@
 
             //on join => check for users
             $join_signs = explode(" ", $com2);
-            if($join_signs[1] == "JOIN" && $name != $this->real_name)
+            if($join_signs[1] == "JOIN" && $name != $this->configuration->get_setting(ConfigManager::BOT_REALNAME))
             {
                 names($com3);
                 $peak_datafile = "peak_" . rtrim($com3) . ".data";

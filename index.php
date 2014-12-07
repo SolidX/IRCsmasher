@@ -9,20 +9,23 @@
  **************************************************/
 
 // includes
-require_once('inc/config.php');
+require_once('inc/ConfigManager.php');
 require_once('inc/functions.php');
 require_once('logger/SimpleLogger.php');
 require_once('logger/HTMLLogger.php');
 
 set_time_limit(0); //set unlimited maximum execution time
 
+//Load configuration information
+$configuration = ConfigManager::getInstance();
+
 //Start up logger
-if ($debug_html == "1")
+if ($configuration->get_setting(ConfigManager::DEBUG_OUTPUT_HTML) === "1")
     $log = new HTMLLogger();
 else
     $log = new SimpleLogger();
 
-if (($debug_mode == "on"))
+if ($configuration->get_setting(ConfigManager::DEBUG_MODE) === "1")
     $log->enable_logging();
 
 $log->write(Logger::LOGMSG_INFO, "IRCmasher started. Have a lot of fun...");
@@ -48,7 +51,7 @@ if ($moddir) { //Ensure modules dir was loaded
             //Pseudo-module-factory
             if (class_exists($file)) {
                 //Module must have the same filename and class name for this to work
-                $module = new $file($ircsocket, $server, $port, preg_quote($nick), $channel, $real_name, $botpw, $log); 
+                $module = new $file($ircsocket, $configuration, $log); 
                 array_push($modules, $module);
             }
         }
@@ -67,17 +70,21 @@ uptime($timestamp, $uptime_data);
 
 // connect to the server
 global $ircsocket;
-$ircsocket = fsockopen($server, $port, $errno, $errstr, 5);
+$errno = 0;
+$errstr = "";
+$ircsocket = fsockopen($configuration->get_setting(ConfigManager::IRC_SRV), $configuration->get_setting(ConfigManager::IRC_SRV_PORT), $errno, $errstr, 5);
 
 if (!$ircsocket) {
     $log->write(Logger::LOGMSG_ERROR, "Error connecting to IRC server host.");
+    $log->write(Logger::LOGMSG_ERROR, "Error Code {$errno}");
+    $log->write(Logger::LOGMSG_ERROR, "Error Message {$errstr}");
     exit(1);
 }
 
 // login
-if ($pass != "")
-    authenticate($pass);
-register_connection($nick, $real_name);
+if ($configuration->get_setting(ConfigManager::IRC_SRV_PASSWD) != "")
+    authenticate($configuration->get_setting(ConfigManager::IRC_SRV));
+register_connection($configuration->get_setting(ConfigManager::BOT_NICK), $configuration->get_setting(ConfigManager::BOT_REALNAME));
 
 // main function
 while (!feof($ircsocket)) {
@@ -95,7 +102,7 @@ while (!feof($ircsocket)) {
     if ($com1 == "PING ") {
         pong($com2);
         continue;
-    }
+}
 
     // Parse Command
     $cmd_com = explode(" ", $com2); //[0] - Originator, [1] Command / Status, [2+] (optional)
@@ -104,7 +111,7 @@ while (!feof($ircsocket)) {
     
     // if username is in use
     if ($cmd_com[1] == "433") {
-        register_connection($nick_alternate, $real_name);
+        register_connection($configuration->get_setting("bot_nick_alternate"), $configuration->get_setting(ConfigManager::BOT_REALNAME));
         continue;
     }
 
@@ -112,12 +119,11 @@ while (!feof($ircsocket)) {
     if ($cmd_com[1] == "376")
     {
         // identify
-        if ($ident != "")
-            identify($nickserv, $ident);
+        if ($configuration->get_setting(ConfigManager::BOT_IDENT_PASSWD) != "")
+            identify($configuration->get_setting(ConfigManager::IRC_SRV_NICKSERV), $configuration->get_setting(ConfigManager::BOT_IDENT_PASSWD));
 
         // join default channels
-        $channels = explode(";", $channel);
-        foreach ($channels as $ch)
+        foreach ($configuration->get_setting(ConfigManager::BOT_CHANNELS) as $ch)
             join_channel($ch);
         
         continue;
@@ -126,7 +132,7 @@ while (!feof($ircsocket)) {
     // commands after connection is established
     // - on join say hello - 
     if ($cmd_com[1] == "332") {
-        delay_priv_msg($cmd_com[3], $hello, "5");
+        delay_priv_msg($cmd_com[3], $configuration->get_setting("bot_greetings"), 5);
         continue;
     }
     
@@ -155,23 +161,29 @@ while (!feof($ircsocket)) {
     $message = $com3;
 
     // now execute the modules
+    $list_triggers = preg_match("/!triggers/i", $message);
     foreach ($modules as $exec_module) {
-        if (preg_match("/!triggers/i", $message))
+        if ($list_triggers)
             $exec_module->getTriggers($sender_nick);
         else
             $exec_module->runModule($incoming, $com1, $com2, $com3, $sender_nick, $cmd_com, $chan, $command, $message);
     }
 
-    // rejoin
-    if ($rejoin == "1") {
-        if ($cmd_com[1] == "KICK") {
-            join_channel($cmd_com[2]);
+    // On being kicked
+    if ($cmd_com[1] == "KICK") {
+        //Remove channel from currently active channels
+        $current_channels = $configuration->get_setting(ConfigManager::BOT_CHANNELS);
+        if(($key = array_search($cmd_com[2], $current_channels)) !== false) {
+            unset($current_channels[$key]);
         }
+        
+        if ($configuration->get_setting("auto_rejoin") === "1")
+            join_channel($cmd_com[2]);
     }
 
     // quit the bot
-    if (preg_match("/go to bed ".preg_quote($nick." ".$botpw)."/i", $message)) {
-        quit($quit_message);
+    if (preg_match("/go to bed ".preg_quote($configuration->get_setting(ConfigManager::BOT_NICK)." ".$configuration->get_setting(ConfigManager::BOT_ADMIN_PASSWD))."/i", $message)) {
+        quit($configuration->get_setting("bot_quit_message"));
         fclose($ircsocket);
         $timestamp = "";
         uptime($timestamp, $uptime_data);

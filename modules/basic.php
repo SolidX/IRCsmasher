@@ -13,17 +13,17 @@
     class Basic extends BaseBotModule
     {
 
-        public function __construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword, Logger $log)
+        public function __construct($socket, ConfigManager $config, Logger $log)
         {
-            parent::__construct($socket, $ircserver, $portNumber, $myNick, $channels, $realName, $botPword, $log);
-            $this->module_version = "1.0";
+            parent::__construct($socket, $config, $log);
+            $this->module_version = "1.0.0";
         }
         
         function runModule ($output, $com1, $com2, $com3, $name, $begin, $chan, $command, $message)
         {
             //if you say schnarchnase
             if (preg_match("/schnarchnase/", $message)) {
-                delay_priv_msg($channel, "schnarchnasen sind cool!", 2);
+                delay_priv_msg($chan, "schnarchnasen sind cool!", 2);
             }
 
             //and now the masters ;)
