@@ -15,54 +15,66 @@
         public function __construct($socket, ConfigManager $config, Logger $log)
         {
             parent::__construct($socket, $config, $log);
-            $this->module_version = "1.0.1";
+            $this->module_version = "1.1.0";
         }
         
         public function runModule($output, $com1, $com2, $com3, $name, $begin, $chan, $command, $message)
         {
-            $target = $this->determineReplyTarget($chan, $name);
-            
-            if (preg_match("/nicovideo\.jp\/watch\/(sm|nm)/i", $output))
+            $matches = array();
+            if (preg_match("/nicovideo\.jp\/watch\/((sm|nm)[0-9]+)/i", $output, $matches))
             {
-                $startPt = stripos($output, "watch/") + 6;
-                $code = substr($output, $startPt);
+		$code = $matches[1];
+                $target = $this->determineReplyTarget($chan, $name);
+                $data = $this->getVideoData($code);
                 
-                while(!ctype_alnum($code))
-                    $code = substr($code, 0, strlen($code) - 1);
+                if ($data)
+                {
+                    $xml = simplexml_load_string($data);                
+                    if (strcasecmp($xml->attributes()->status, "fail") == 0)
+                    {
+                        priv_msg($target, "Information for " . parent::BOLD . $code . parent::BOLD . " could not be found.");
+                        $this->log->write(Logger::LOGMSG_WARNING, "Nico Video Lookup: Video Code: {$code}\tStatus: Fail\tError Code: {$xml->error[0]->code}");
+                    }
+                    else
+                    {
+                        $title = $xml->thumb[0]->title;
+                        $length = $xml->thumb[0]->length;
+                        $views = $xml->thumb[0]->view_counter;
 
-                $this->getVidData($code, $target);
-                return;
+                        priv_msg($target, parent::BOLD . "Title: " . parent::BOLD . $title);
+                        priv_msg($target, parent::BOLD . "Length: " . parent::BOLD . $length . "     " . parent::BOLD . "Views: " . parent::BOLD . $views);
+                        $this->log->write(Logger::LOGMSG_INFO, "Nico Video Lookup: Title: {$title}\tLength: {$length}\tViews: {$views}");
+                    }
+                }
+                else
+                    $this->log->write(Logger::LOGMSG_WARNING, "Could not access Nico Nico API.");
             }
         }
         
-        private function getVidData($vidCode, $channel)
+        /**
+         * Sends a request to the NND API to get information about a video.
+         * 
+         * @param string $video_code NND video id (starting in sm or nm)
+         * @param string $target The user or channel to send the results to.
+         * @return string Returns the raw XML results from the API as a string or null if a connection could not be established.
+         */
+        private function getVideoData($video_code)
         {
-            $vidCode = trim($vidCode);
+            $video_code = trim($video_code);
 
-            $api = fopen("http://ext.nicovideo.jp/api/getthumbinfo/$vidCode","r");
-            $vidData = "";
-
-            while ($data = fread($api, 4096))
-                $vidData .= $data;
-
-            fclose($api);
-
-            if (preg_match('/nicovideo_thumb_response status="fail"/i', $vidData))
+            $api = fopen("http://ext.nicovideo.jp/api/getthumbinfo/{$video_code}","r");
+            
+            if ($api)
             {
-                priv_msg($channel, parent::BOLD.$vidCode.parent::BOLD." has been deleted or is no longer availible.");
-                echo "<b>Nico Video Lookup:</b> Video Code: $vidCode\tStatus: Fail<br />\n";
-            }
-            else
-            {
-                $xml = simplexml_load_string($vidData);
-                $title = $xml->thumb[0]->title;
-                $length = $xml->thumb[0]->length;
-                $views = $xml->thumb[0]->view_counter;
+                $vid_info = "";
 
-                priv_msg($channel, parent::BOLD."Title: ".parent::BOLD.$title);
-                priv_msg($channel, parent::BOLD."Length: ".parent::BOLD.$length."     ".parent::BOLD."Views: ".parent::BOLD.$views);
-                echo "<b>Nico Video Lookup:</b> Title: $title\tLength: $length\tViews: $views<br />\n";
+                while ($data = fread($api, 4096))
+                    $vid_info .= $data;
+
+                fclose($api);
+                return $vid_info;
             }
+            return null;
         }
         
         /**
