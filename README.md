@@ -33,6 +33,14 @@ You can extend the functionality of your IRCsmasher by adding modules to it's `m
 All modules placed in the directory are automatically loaded and run at run time.
 To create a new module see [modules/basic.php](modules/basic.php) as an example.
 
+###Default Modules
+IRCsmasher comes with 5 modules installed out of the box:
+ * **Admin** - Allows users with the bot admin password to have bot perform common tasks like joining channels or kicking users
+ * **Ai** - Causes the bot to say key phrases based on pre-specified keywords.
+ * **Basic** - Standard features like getting the time/date and the bot's uptime.
+ * **Nico Nico Link Preview** - Displays the title, length & number of views for [nico nico videos](http://nicovideo.jp) linked in messages
+ * **Peak** - Logs / displays the peak number of users the bot has observed in a channel
+
 
 Commands
 --------

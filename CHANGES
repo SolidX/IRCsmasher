@@ -1,3 +1,7 @@
+[IRCsmasher v1.1.1]
+- Adds Nico Nico Video Link Preview module
+- Fixes module file names to match capitalization of module class names.
+
 [IRCsmasher v1.0.0]
 - Forked IRCmasher
 - Refactored IRCmasher.
