@@ -9,12 +9,12 @@ The original intent of this bot was to create a lightweight, easy to deploy IRC 
 Installation & Use
 ------------------
 
-###Webserver
+### Webserver
 Drop the source files in to an accessible path on your web server and visit index.php.
 You should protect this script with a password or something otherwise anyone who visits will be able to launch your IRC bot.
 See your web server's manual for more information!
 
-###Command Line
+### Command Line
 Alternatively, you can run this from the command-line (DOS-Prompt, Shell, ect.).
 This requires PHP with CLI-Support! (See [Using PHP from the command line](http://www.php.net/manual/en/features.commandline.php))
 (You may want to set `debug_output_html` to `Off` in the [config file](inc/config.ini) if you do this.)
@@ -33,7 +33,7 @@ You can extend the functionality of your IRCsmasher by adding modules to it's `m
 All modules placed in the directory are automatically loaded and run at run time.
 To create a new module see [modules/basic.php](modules/basic.php) as an example.
 
-###Default Modules
+### Default Modules
 IRCsmasher comes with 5 modules installed out of the box:
  * **Admin** - Allows users with the bot admin password to have bot perform common tasks like joining channels or kicking users
  * **Ai** - Causes the bot to say key phrases based on pre-specified keywords.
